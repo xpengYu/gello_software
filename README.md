@@ -1,6 +1,8 @@
 # Quick Start in Windows on our xarm7
 ```
-python scripts\gello_get_offset.py --start-joints 0 0 0 1.57 0 1.57 0  --joint-signs 1 1 1 1 1 1 1  --port COM5  #change port to yours
+python scripts\gello_get_offset.py --start-joints 0 0 0 1.57 0 1.57 0  \
+                                   --joint-signs 1 1 1 1 1 1 1  --port COM5\
+                                   #change port to yours
 ```
 Put joint_offsets in agents\gello_agent.py PORT_CONFIG_MAP
 ```
