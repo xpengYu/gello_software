@@ -92,3 +92,4 @@ def main(args):
 
 if __name__ == "__main__":
     main(tyro.cli(Args))
+"""python .\experiments\launch_nodes.py --robot xarm --robot_ip 192.168.1.209"""

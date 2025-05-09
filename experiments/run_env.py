@@ -117,7 +117,7 @@ def main(args):
                     )
             if args.start_joints is None:
                 reset_joints = np.deg2rad(
-                    [0, -90, 90, -90, -90, 0, 0]
+                    [0, 0, 0, 90, 0, 90, 0, 0]
                 )  # Change this to your own reset joints
             else:
                 reset_joints = args.start_joints
@@ -150,7 +150,7 @@ def main(args):
     start_pos = agent.act(env.get_obs())
     obs = env.get_obs()
     joints = obs["joint_positions"]
-
+    import pdb; pdb.set_trace()
     abs_deltas = np.abs(start_pos - joints)
     id_max_joint_delta = np.argmax(abs_deltas)
 
@@ -174,7 +174,7 @@ def main(args):
     assert len(start_pos) == len(
         joints
     ), f"agent output dim = {len(start_pos)}, but env dim = {len(joints)}"
-
+    pdb.set_trace()
     max_delta = 0.05
     for _ in range(25):
         obs = env.get_obs()
@@ -185,7 +185,7 @@ def main(args):
         if max_joint_delta > max_delta:
             delta = delta / max_joint_delta * max_delta
         env.step(current_joints + delta)
-
+    # import pdb; pdb.set_trace()
     obs = env.get_obs()
     joints = obs["joint_positions"]
     action = agent.act(obs)

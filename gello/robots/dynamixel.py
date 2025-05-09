@@ -15,7 +15,7 @@ class DynamixelRobot(Robot):
         joint_signs: Optional[Sequence[int]] = None,
         real: bool = False,
         port: str = "/dev/ttyUSB0",
-        baudrate: int = 57600,
+        baudrate: int = 1000000,
         gripper_config: Optional[Tuple[int, float, float]] = None,
         start_joints: Optional[np.ndarray] = None,
     ):
@@ -24,7 +24,8 @@ class DynamixelRobot(Robot):
             DynamixelDriverProtocol,
             FakeDynamixelDriver,
         )
-
+        self.max_driver_gripper = 3.47753445 # max is open
+        self.min_dirver_gripper = 2.51572849 # min is close
         print(f"attempting to connect to port: {port}")
         self.gripper_open_close: Optional[Tuple[float, float]]
         if gripper_config is not None:
@@ -35,7 +36,7 @@ class DynamixelRobot(Robot):
             # joint_offsets.append(0.0)
             # joint_signs.append(1)
             joint_ids = tuple(joint_ids) + (gripper_config[0],)
-            joint_offsets = tuple(joint_offsets) + (0.0,)
+            joint_offsets = tuple(joint_offsets) + (0,)
             joint_signs = tuple(joint_signs) + (1,)
             self.gripper_open_close = (
                 gripper_config[1] * np.pi / 180,
@@ -97,23 +98,26 @@ class DynamixelRobot(Robot):
                     + joint_offset
                 )
             if gripper_config is not None:
-                new_joint_offsets.append(self._joint_offsets[-1])
+                new_joint_offsets.append(np.pi)
             self._joint_offsets = np.array(new_joint_offsets)
 
     def num_dofs(self) -> int:
         return len(self._joint_ids)
 
     def get_joint_state(self) -> np.ndarray:
+        # import pdb; pdb.set_trace()
         pos = (self._driver.get_joints() - self._joint_offsets) * self._joint_signs
         assert len(pos) == self.num_dofs()
 
         if self.gripper_open_close is not None:
             # map pos to [0, 1]
-            g_pos = (pos[-1] - self.gripper_open_close[0]) / (
-                self.gripper_open_close[1] - self.gripper_open_close[0]
-            )
-            g_pos = min(max(0, g_pos), 1)
-            pos[-1] = g_pos
+            # g_pos = (pos[-1] - self.gripper_open_close[0]) / (
+            #     self.gripper_open_close[1] - self.gripper_open_close[0]
+            # )
+            # g_pos = min(max(0, g_pos), 1)
+            # pos[-1] = g_pos
+            current_gripper = (pos[-1] - self.min_dirver_gripper) / (self.max_driver_gripper - self.min_dirver_gripper)
+            pos[-1] = 1 - current_gripper
 
         if self._last_pos is None:
             self._last_pos = pos
