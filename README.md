@@ -1,3 +1,16 @@
+# Quick Start in Windows on our xarm7
+```
+python scripts\gello_get_offset.py --start-joints 0 0 0 1.57 0 1.57 0  \
+                                   --joint-signs 1 1 1 1 1 1 1  --port COM5\
+                                   #change port to yours
+```
+Put joint_offsets in agents\gello_agent.py PORT_CONFIG_MAP
+```
+python experiments\launch_nodes.py --robot xarm --robot_ip 192.168.1.209
+python experiments\run_env.py --agent=gello --gello_port=COM5
+```
+
+
 # GELLO
 This is the central repo that holds the all the software for GELLO. See the website for the paper and other resources for GELLO https://wuphilipp.github.io/gello_site/
 See the GELLO hardware repo for the STL files and hardware instructions for building your own GELLO https://github.com/wuphilipp/gello_mechanical
